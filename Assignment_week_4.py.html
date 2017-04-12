@@ -1,0 +1,94 @@
+
+# coding: utf-8
+
+# # Assignment for week 4
+# 
+# Use the following table to provide us with
+# 
+# |name | exam number|
+# |----|----|
+# |Bastiaan Heerius| 2002377 |
+# |other group member's name| exam number|
+
+# In this assignment, we will play around with functions and use the `fsolve` routine to solve an equation.
+# 
+# First, we need to import some libraries.
+# 
+# Recall that you need to have installed plotly for this to work. Further, you need to register at the plotly website.
+
+# In[23]:
+
+from scipy import optimize
+
+from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+from plotly.graph_objs import Bar, Scatter, Figure, Layout
+init_notebook_mode(connected=True)
+from numpy import arange
+
+
+# Let us define the function $f(x) = x^2+c$ which is a function of $x$ for a given value of $c$.
+
+# In[24]:
+
+def my_function(x,c):
+    return x**2 + c
+
+
+# Now we would like to solve $x^2 + c =0$. As this is a simple equation, you can this analytically. This helps us to understand how `fsolve` works.
+# 
+# If you want to know more about `fsolve`, simply google "python fsolve".
+# 
+# For our purposes here, we call `fsolve` as `optimize.fsolve`, then we give a function and an initial value where `fsolve` starts looking for a solution. `fsolve` uses numerical techniques to find the "zero" of a function; it does not solve the equation analytically. Roughly speaking, it looks at a value of $x$ whether it is above or below 0. If it is below 0, it needs to change $x$ in such a way that $f(x)$ increases. It uses the derivative $f'(x)$ to figure out whether it should increase or decrease $x$ to get to $f(x)=0$. So suppose that $f(x) < 0$ and $f'(x) >0$ then it will increase $x$ (move to the right) to a solution to $f(x) =0$.
+# 
+# As `my_function` is actually a function of two variables ($x$ and $c$), we define a new "anonymous" function `lambda` that is only a function of $x$ and we solve for this function to 0. Say, we start looking for a solution at $x=1$, then we type:
+
+# In[25]:
+
+optimize.fsolve(lambda x: my_function(x,-2),+1)
+
+
+# This only gives one solution? But with a quadratic equation, there are usually two solutions. In the following cell give the python command to give the other solution:
+
+# In[26]:
+
+optimize.fsolve(lambda x: my_function(x,-2),-1)
+
+
+# Now try the following cell. Explain below why you get an error message; $x=0$ does not solve this equation?
+
+# In[27]:
+
+optimize.fsolve(lambda x: my_function(x,-2),0)
+
+
+# f'(x)=0, then Python does not know where to start (witch side of the graph).
+
+# Now we let's consider another function, with $c = 2$ (instead of $c = -2$). Explain below why we get an error this time
+
+# In[28]:
+
+optimize.fsolve(lambda x: my_function(x,2),-1)
+
+
+# The graph does not intersect 0. 
+
+# Now define the function $f(x) = \frac{1}{x}$ in python:
+
+# In[29]:
+
+def f(x):
+    return 1/x
+
+
+# and use plotly to plot this function for $x > 0$. Adjust the range for $x$ so that you get a "decent" graph.
+
+# In[33]:
+
+range_x = arange(0.5, 2.1, 0.1)
+iplot([{"x": range_x, "y": [f(x) for x in range_x]}])
+
+
+# In[ ]:
+
+
+
