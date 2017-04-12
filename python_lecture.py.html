@@ -1,0 +1,215 @@
+
+# coding: utf-8
+
+# # Introduction to python
+# 
+# You learn the details of python programming from [datacamp](https://campus.datacamp.com/courses/intro-to-python-for-data-science/chapter-1-python-basics?ex=1). 
+# 
+# Here we use python in the jupyter notebook. You also use the notebook for your assignments that you upload on github. 
+# 
+# In the notebook, you evaluate (or "run") the python code by pressing the `SHIFT` and `ENTER` keys simultaneously.
+# 
+# The first part of the notebook will be explained during the lecture. The assignments will be discussed in the tutorial. Note that you need to upload your assignments before your tutorial! Github registers the time at which you upload your file and we use this timestamp.
+# 
+# ## Why do we learn python?
+# 
+# You may have used Excel before and think that this is all you need to know to compute stuff. However, as the next tweet illustrates, Excel is not so great.
+
+# In[1]:
+
+get_ipython().run_cell_magic('html', '', '\n<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Relying on Excel for important calculations is like driving drunk: no matter how carefully you do it, a wreck is likely. <a href="https://twitter.com/hashtag/reproducibility?src=hash">#reproducibility</a></p>&mdash; Philip Stark (@philipbstark) <a href="https://twitter.com/philipbstark/status/498683914592862208">August 11, 2014</a></blockquote>\n<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>')
+
+
+# Hence, there is value in learning a proper programming language. And python is a great language to learn!
+
+# ## Bargaining model
+# 
+# In this lecture, we focus on an economic application programmed in python. We look at a bargaining model where two players can divide a "pie" of size $\bar x >0$. One player makes an offer $x \in [0,\bar x]$ and the other player can either accept or reject. If the other player accepts the offer, she gets $x$ and the player making the offer gets the rest of the pie $\bar x -x$.
+# 
+# We first consider this bargaining problem in a one shot game. One player, let's denote this player 1, makes an offer to player 2. Then we consider this game with several periods, where players 1 and 2 make offers alternatingly. 
+# 
+# 
+
+# ## One period model
+# 
+# Recall that $\bar x$ denotes the size of the pie that players 1 and 2 can distribute. Here we work with $\bar x =10$. The offers that players can make are integer numbers between 0 and 10. Thus $x \in \{0,1,2,...,9,10\}$.
+# 
+# In this notebook we use the numpy library that we import:
+
+# In[8]:
+
+import numpy as np
+
+
+# We define the smallest offer someone can make (0) and the highest offer ($\bar x =10$). Then we create a list (actually a numpy array) with integer numbers between 0 and 10. To understand the syntax, google on "numpy arange". 
+
+# In[9]:
+
+min_offer = 0.0
+max_offer = 10.0
+offers = np.arange(min_offer,max_offer+1,1)
+
+
+# This is what the variable `offers` looks like:
+
+# In[10]:
+
+offers
+
+
+# We assume that players can either accept or reject an offer $x$. If a player accepts $x$, she receives a payoff equal to $x$. If she rejects $x$, she receives her outside option $x^o$. The idea is that instead of dealing with the player making her an offer, she can do "something else". This something else gives her $x^o$.
+# 
+# Similarly, the player making the offer: she receives $\bar x - x$ if the offer is accepted. If the offer is not accepted, this player also receives her outside option.
+# 
+# In the game considered here, player 1 makes the offer and player 2 decides whether to accept of reject this offer. Let the outside option of player $i$ be denoted by $x^o_i$, $i \in \{1,2\}$.
+# 
+# When should player 2 accept the offer $x$? She should accept if $x$ gives her at least her outside option. If $x < x^o_2$, she is better off rejecting the offer as this will give her $x_2^o$ which exceeds the offer $x$.
+# 
+# We define a function `accept_offer` in python which determines whether an offer is acceptable or not. This function takes two arguments: the offer that is made and the outside option of the player who decides whether or not to accept the offer. If the offer exceeds the outside option, she accepts the offer.
+# 
+# In this function, we define the `accept` decision as a boolean. If you forgot about this, google "python boolean". In the code below, we will use that `FALSE` in python equals 0 while `TRUE` equals 1.
+# 
+
+# In[11]:
+
+def accept_offer(offer,your_outside_option):
+    accept = (offer >= your_outside_option)
+    return accept
+
+
+# Hence, if player 2 receives an offer of 4 and has an outside option equal to 5, she rejects the offer:
+
+# In[12]:
+
+accept_offer(4,5)
+
+
+# To figure out which offer player 1 should make to player 2, we plot the profits of player 1 as a function of the offers made and the outside option of player 2. In order to plot these profits, we import [plotly](https://plot.ly/).
+# 
+# You may have to install plotly on your system. Here you can find the [instructions to install plotly.](https://plot.ly/python/getting-started/)
+# 
+# Once it is installed, we can import plotly.
+# 
+
+# In[13]:
+
+from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+from plotly.graph_objs import Bar, Scatter, Figure, Layout
+init_notebook_mode(connected=True) # run at the start of every ipython notebook to use plotly.offline
+                     # this injects the plotly.js source files into the notebook
+
+
+# First, let's make a simple plot using `iplot`. We specify the points on the horizontal axis ("x") with the list `offers` and then give a list with coordinates of the vertical axis ("y"). The y-coordinate gives the payoff of the offfer. If the offer is rejected, player 1 gets 0 (and is probably better off with the outside option). If the offer $x$ is accepted, player 1 receives $\bar x -x$. Note that we use here that `accept_offer` equals 1 (0) when `TRUE` (`FALSE`).
+
+# In[15]:
+
+iplot([{"x": offers, "y": [(max_offer-offer)*accept_offer(offer,4) for offer in offers]}])
+
+
+# Hence, the best offer that you can make is the lowest offer that is still accepted by the other player. Hence, player 1 offers player 2 the outside option $x_2^o$.
+# 
+# With `iplot` we can actually make more interesting graphs than the one above. We can add text to the horizontal and vertical axes to explain what they represent (offer and profit, resp.). We can add a title to the graph. We can generare the profit for different values of the outside option by using `for outside in [6,7,8,9]`. Hence, `iplot` will create the data-scatter for each of these values of the outside option.
+# 
+# This graph is interactive. If you click on one of the lines in the legend, the line disappears or reappears. Also, hovering with your cursor over the points gives you some additional information.
+# 
+
+# In[26]:
+
+iplot({
+    'data': [
+        Scatter(x=offers,
+                y=[(max_offer-offer)*accept_offer(offer,outside) for offer in offers],
+                name = "other outside offer "+str(outside))
+    for outside in [6,7,8,9]],
+        'layout': Layout(
+    title= 'profit of offer maker',
+    hovermode= 'closest',
+    xaxis= dict(
+        title= 'poep',
+        ticklen= 5,
+        zeroline= True,
+        gridwidth= 2,
+    ),
+    yaxis=dict(
+        title= 'profit',
+        ticklen= 5,
+        gridwidth= 2,
+    ))
+}, show_link=True)
+
+
+# Now we can determine the optimal offer made by player 1. From the list `profits` choose the highest number and denote this by `max_profit`. Then `max_index` captures the position in `profits` of this `max_profit`. With this `max_index` we can figure out what the offer is that leads to this highest profit: `offers[max_index]`. 
+# 
+# Finally, we need to check whether the max. profit that player 1 can earn --if her offer is accepted-- exceeds her outside option.
+# 
+# The function `make_offer` does these things and returns a list with the optimal offer ($-1$ if the optimal offer leads to a lower payoff than player 1's outside option).
+
+# In[17]:
+
+def make_offer(your_outside_option,other_outside_option):
+    profits = [(max_offer-offer)*accept_offer(offer,other_outside_option) for offer in offers]
+    max_profit = max(profits)
+    max_index = profits.index(max_profit)
+    if max_profit >= your_outside_option:
+        your_offer = offers[max_index]
+        your_profit = max_offer-offers[max_index]
+        other_profit = offers[max_index]
+    else:
+        your_offer = -1 # no offer is made
+        your_profit = your_outside_option
+        other_profit = other_outside_option
+    return your_offer, your_profit, other_profit
+
+
+# Consider the case where players 1 and 2 do not have an outside option. That is, $x_1^o=x_2^o=0$. Then player 1 offers $x=0$ to player 2. Player 2 accepts this offer (outside option is not better than this). Player 1 receives a payoff equal to 10 and player 2 receives 0.
+
+# In[18]:
+
+make_offer(0,0)
+
+
+# This outcome is very asymmetric and extreme. Intuitively, this is due to the fact that only player 1 can make offers. A natural extension is to allow player 2 to make an offer as well. 
+
+# ## Two period model
+# 
+# Consider a two period version of the bargaining model above. Player 1 can make an offer $x_1$ in the first period. If this offer is accepted by player 2, the game is finished. If player 2 rejects the offer, then we move to the second stage in which player 2 is allowed to make an offer $x_2$ to player 1. Player 1 can accept or reject this offer. If player 1 accepts, her payoff equals $x_2$ and player 2's payoff equals $\bar x - x_2$.
+# 
+# Payoffs are discounted with discount factor $\delta \in \langle 0,1 \rangle$. Hence, if player 1's offer in the first period is rejected, while player 2's offer in the second period is accepted, players 1 and 2's payoffs equal $\delta x_2, \delta (\bar x - x_2)$ resp.
+# 
+# Assume that the (exogenous) outside option for both players equals 0. 
+# 
+# Player 1 makes an offer $x$ to player 2 in the first period. If this offer is accepted, 2 gets $x$ and 1 receives $\bar x - x$ and the game is over.
+# 
+# If player 2 rejects 1's offer, the game moves to the second (and last) period. In this period, player 2 can make the offer. What offer will player 2 make?
+# 
+
+# In[19]:
+
+delta = 0.9
+outside_options = {} # dictionary of outside options as a function (key) of period
+outside_options[2]= [0,0] # first element in the list is 1's outside option, 
+                          # second element 2's outside option in period 2
+
+
+
+
+
+# In period 2, player 2 makes the offer:
+
+# In[20]:
+
+offer2 = make_offer(outside_options[2][1],outside_options[2][0])
+outside_options[1] = [delta*offer2[2],delta*offer2[1]]
+
+
+# In[21]:
+
+make_offer(outside_options[1][0],outside_options[1][1])
+
+
+# 
+
+# In[ ]:
+
+
+
