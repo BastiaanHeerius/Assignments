@@ -10,3 +10,8 @@ This repository contains my assignments
 [Assignment week 6](https://github.com/BastiaanHeerius/Assignments/blob/master/assignment4-2.ipynb)
 
 [Assignment week 8](https://github.com/BastiaanHeerius/Assignments/blob/master/assignment5-2.ipynb)
+
+[Final R assignmen](https://github.com/BastiaanHeerius/Assignments/blob/master/OECD_R_exam-2.ipynb)
+
+
+
