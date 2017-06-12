@@ -11,7 +11,7 @@ This repository contains my assignments
 
 [Assignment week 8](https://github.com/BastiaanHeerius/Assignments/blob/master/assignment5-2.ipynb)
 
-[Final R assignmen](https://github.com/BastiaanHeerius/Assignments/blob/master/OECD_R_exam-2.ipynb)
+[Final R assignment](https://github.com/BastiaanHeerius/Assignments/blob/master/OECD_R_exam-2.ipynb)
 
-
+[Final Phyton assignment](https://github.com/BastiaanHeerius/Assignments/blob/master/Final_Assignment_Python_1_students.ipynb)
 
